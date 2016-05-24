@@ -187,17 +187,20 @@ ccm.component({
                 var messageChat = ccm.helper.find(self, '.messages');
                 var chatData = self.store.get(chatId);
                 var messageData = chatData.messages;
+                var template = 'message';
 
                 messageChat.html('');
 
                 console.log(messageData);
 
                 messageData.forEach(function (message) {
-                    messageChat.append(ccm.helper.html(self.html.get('message'), {
+                    if(message.from === self.user.data().key) {
+                        template = 'message-me';
+                    }
 
+                    messageChat.append(ccm.helper.html(self.html.get(template), {
                         name: ccm.helper.val(message.from),
                         text: ccm.helper.val(message.text)
-
                     }));
                 });
 
