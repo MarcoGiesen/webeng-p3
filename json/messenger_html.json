@@ -65,7 +65,7 @@
           "inner": [
             {
               "tag": "input",
-              "class": "input",
+              "class": "message-input",
               "placeholder": "Enter message here..."
             },
             {
@@ -73,6 +73,37 @@
               "class": "button",
               "type": "submit",
               "value": "Send"
+            }
+          ],
+          "onsubmit": "%onsubmit%"
+        }
+      }
+    ]
+  },
+  "inputChat": {
+    "tag": "div",
+    "class": "new_chat",
+    "inner": [
+      {
+        "tag": "div",
+        "class": "names"
+      },
+      {
+        "tag": "div",
+        "class": "text",
+        "inner": {
+          "tag": "form",
+          "inner": [
+            {
+              "tag": "input",
+              "class": "chat-input",
+              "placeholder": "Enter one or more names"
+            },
+            {
+              "tag": "input",
+              "class": "button",
+              "type": "submit",
+              "value": "Anlegen"
             }
           ],
           "onsubmit": "%onsubmit%"
