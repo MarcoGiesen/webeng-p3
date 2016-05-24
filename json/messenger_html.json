@@ -39,13 +39,29 @@
     "inner": [
       {
         "tag": "div",
+        "class": "text",
+        "inner": "%text%"
+      },
+      {
+        "tag": "div",
         "class": "name",
         "inner": "%name%"
-      },
+      }
+    ]
+  },
+  "message-me": {
+    "tag": "div",
+    "class": "message-me",
+    "inner": [
       {
         "tag": "div",
         "class": "text",
         "inner": "%text%"
+      },
+      {
+        "tag": "div",
+        "class": "name",
+        "inner": "%name%"
       }
     ]
   },
@@ -112,7 +128,7 @@
     ]
   },
   "userInfo": {
-    "tag": "div",
+    "tag": "h1",
     "class": "userActions",
     "inner": "%username%"
   }

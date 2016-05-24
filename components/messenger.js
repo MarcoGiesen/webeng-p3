@@ -96,7 +96,7 @@ ccm.component({
                 var key = self.user.data().key;
                 console.log('Account: ' + key);
                 self.store.get(key, function (dataset) {
-                    if(dataset === null) {
+                    if (dataset === null) {
                         var key = self.user.data().key;
                         console.log({key: key, chats: []});
                         self.store.set({key: key, chats: []}, function () {
@@ -137,18 +137,20 @@ ccm.component({
 
                         var timestamp = new Date().getUTCMilliseconds();
 
-                        self.store.set({key: timestamp, participants: [self.user.data().key, value], messages: []}, function () {
-                            // add chat to users and check if new participants are null
-                            var part;
-                            self.store.get(value, function (dataset) {
-                                if(dataset === null) {
+                        self.store.set({
+                            key: timestamp,
+                            participants: [self.user.data().key, value],
+                            messages: []
+                        }, function () {
+                            self.store.get(value, function (userData) {
+                                if (userData === null) {
                                     self.store.set({key: value, chats: [timestamp]}, function () {
-                                        part = dataset;
+                                        console.log('new user created');
                                     });
                                 } else {
-                                    dataset.chats.push(timestamp);
-                                    dataset.store.set(dataset, function () {
-                                        part = dataset;
+                                    userData.chats.push(timestamp);
+                                    self.store.set(userData, function () {
+                                        console.log('added new conversation to user');
                                     });
                                 }
                             });
@@ -183,19 +185,22 @@ ccm.component({
 
             function loadChat(chatId) {
                 var messageChat = ccm.helper.find(self, '.messages');
-                var dataset = self.store.get(chatId);
-                var messageData = dataset.messages;
+                var chatData = self.store.get(chatId);
+                var messageData = chatData.messages;
+                var template = 'message';
 
                 messageChat.html('');
 
                 console.log(messageData);
 
                 messageData.forEach(function (message) {
-                    messageChat.append(ccm.helper.html(self.html.get('message'), {
+                    if(message.from === self.user.data().key) {
+                        template = 'message-me';
+                    }
 
+                    messageChat.append(ccm.helper.html(self.html.get(template), {
                         name: ccm.helper.val(message.from),
                         text: ccm.helper.val(message.text)
-
                     }));
                 });
 
@@ -204,12 +209,12 @@ ccm.component({
                         var value = ccm.helper.val(ccm.helper.find(self, '.message-input').val()).trim();
 
                         if (value === '') {
-                            return;
+                            return false;
                         }
 
-                        dataset.messages.push({from: self.user.data().key, text: value});
+                        chatData.messages.push({from: self.user.data().key, text: value});
 
-                        self.store.set(dataset, function () {
+                        self.store.set(chatData, function () {
                             loadChat(chatId);
                         });
 
