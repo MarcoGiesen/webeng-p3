@@ -80,6 +80,37 @@
       }
     ]
   },
+  "inputChat": {
+    "tag": "div",
+    "class": "new_chat",
+    "inner": [
+      {
+        "tag": "div",
+        "class": "names"
+      },
+      {
+        "tag": "div",
+        "class": "text",
+        "inner": {
+          "tag": "form",
+          "inner": [
+            {
+              "tag": "input",
+              "class": "input",
+              "placeholder": "Enter one or more names"
+            },
+            {
+              "tag": "input",
+              "class": "button",
+              "type": "submit",
+              "value": "Anlegen"
+            }
+          ],
+          "onsubmit": "%onsubmit%"
+        }
+      }
+    ]
+  },
   "userInfo": {
     "tag": "div",
     "class": "userActions",

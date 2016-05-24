@@ -127,6 +127,12 @@ ccm.component({
                 divToAppend.append(ccm.helper.html(self.html.get('userInfo'), {
                     username: ccm.helper.val(username)
                 }));
+                divToAppend.append(ccm.helper.html(self.html.get('inputChat'), {
+                    onsubmit: function () {
+                        // new message in chat and reload logic here
+                        return false;
+                    }
+                }));
             }
 
             function renderChats(divToAppend, chats) {
