@@ -23,8 +23,8 @@ ccm.component({
 
         html: [ccm.store, {local: 'json/messenger_html.json'}],
         key: 'messenger',
-        //store: [ccm.store, {store: 'messenger', url: 'wss://ccm.inf.h-brs.de:8888/index.js'}],
-        store: [ccm.store, {local: 'json/messenger_data.json'}],
+        store: [ccm.store, {store: 'messenger', url: 'ws://ccm2.inf.h-brs.de/index.js'}],
+        //store: [ccm.store, {local: 'json/messenger_data.json'}],
         style: [ccm.store, {local: 'css/messenger.css'}],
         user: [ccm.instance, 'https://kaul.inf.h-brs.de/ccm/components/user2.js']
         // ...
@@ -90,11 +90,22 @@ ccm.component({
          * @param {function} [callback] - callback when content is rendered
          */
         this.render = function (callback) {
-
+            var data;
 
             self.user.login(function () {
-                self.store.get(self.user.data().key, function (dataset) {
-                    renderMainView(dataset);
+                var key = self.user.data().key;
+                console.log('Account: ' + key);
+                self.store.get(key, function (dataset) {
+                    if(dataset === null) {
+                        var key = self.user.data().key;
+                        console.log({key: key, chats: []});
+                        self.store.set({key: key, chats: []}, function () {
+                            self.render();
+                        });
+                    } else {
+                        data = dataset;
+                        renderMainView(dataset);
+                    }
                 });
             });
             /**
@@ -106,21 +117,10 @@ ccm.component({
                 var element = ccm.helper.element(self);
                 element.html(ccm.helper.html(self.html.get('main')));
 
-                var chatOverviewDiv = ccm.helper.find(self, '.chat-overview');
-                var messageChat = ccm.helper.find(self, '.messages');
                 var header = ccm.helper.find(self, '.header');
 
-                var userChatData = dataset;
-
-                console.log(userChatData);
-
-                if (userChatData === null) {
-                    self.store.setParameter(self.user.data().key, []);
-                    userChatData = self.store.get(self.user.data().key);
-                }
-
                 renderHeader(header, self.user.data().key);
-                renderChats(chatOverviewDiv, userChatData.chats);
+                renderChats(dataset.chats);
             }
 
             function renderHeader(divToAppend, username) {
@@ -129,17 +129,48 @@ ccm.component({
                 }));
                 divToAppend.append(ccm.helper.html(self.html.get('inputChat'), {
                     onsubmit: function () {
-                        // new message in chat and reload logic here
+                        var value = ccm.helper.val(ccm.helper.find(self, '.chat-input').val()).trim();
+
+                        if (value === '') {
+                            return false;
+                        }
+
+                        var timestamp = new Date().getUTCMilliseconds();
+
+                        self.store.set({key: timestamp, participants: [self.user.data().key, value], messages: []}, function () {
+                            // add chat to users and check if new participants are null
+                            var part;
+                            self.store.get(value, function (dataset) {
+                                if(dataset === null) {
+                                    self.store.set({key: value, chats: [timestamp]}, function () {
+                                        part = dataset;
+                                    });
+                                } else {
+                                    dataset.chats.push(timestamp);
+                                    dataset.store.set(dataset, function () {
+                                        part = dataset;
+                                    });
+                                }
+                            });
+
+                            data.chats.push(timestamp);
+
+                            self.store.set(data, function () {
+                                renderChats(data.chats);
+                            });
+                        });
+
                         return false;
                     }
                 }));
             }
 
-            function renderChats(divToAppend, chats) {
+            function renderChats(chats) {
+                var chatOverviewDiv = ccm.helper.find(self, '.chat-overview');
                 chats.forEach(function (chat) {
                     var dbChat = self.store.get(chat);
 
-                    divToAppend.append(ccm.helper.html(self.html.get('chat'), {
+                    chatOverviewDiv.append(ccm.helper.html(self.html.get('chat'), {
                         name: ccm.helper.val(chat),
                         onclick: function () {
                             loadChat(chat);
@@ -152,7 +183,8 @@ ccm.component({
 
             function loadChat(chatId) {
                 var messageChat = ccm.helper.find(self, '.messages');
-                var messageData = self.store.get(chatId).messages;
+                var dataset = self.store.get(chatId);
+                var messageData = dataset.messages;
 
                 messageChat.html('');
 
@@ -169,11 +201,24 @@ ccm.component({
 
                 messageChat.append(ccm.helper.html(self.html.get('inputMessage'), {
                     onsubmit: function () {
-                        // new message in chat and reload logic here
+                        var value = ccm.helper.val(ccm.helper.find(self, '.message-input').val()).trim();
+
+                        if (value === '') {
+                            return;
+                        }
+
+                        dataset.messages.push({from: self.user.data().key, text: value});
+
+                        self.store.set(dataset, function () {
+                            loadChat(chatId);
+                        });
+
                         return false;
                     }
                 }));
             }
+
+            if (callback) callback();
         };
 
     }

@@ -65,7 +65,7 @@
           "inner": [
             {
               "tag": "input",
-              "class": "input",
+              "class": "message-input",
               "placeholder": "Enter message here..."
             },
             {
@@ -96,7 +96,7 @@
           "inner": [
             {
               "tag": "input",
-              "class": "input",
+              "class": "chat-input",
               "placeholder": "Enter one or more names"
             },
             {
