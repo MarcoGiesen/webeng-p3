@@ -112,7 +112,7 @@
     ]
   },
   "userInfo": {
-    "tag": "div",
+    "tag": "h1",
     "class": "userActions",
     "inner": "%username%"
   }

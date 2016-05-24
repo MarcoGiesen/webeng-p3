@@ -96,7 +96,7 @@ ccm.component({
                 var key = self.user.data().key;
                 console.log('Account: ' + key);
                 self.store.get(key, function (dataset) {
-                    if(dataset === null) {
+                    if (dataset === null) {
                         var key = self.user.data().key;
                         console.log({key: key, chats: []});
                         self.store.set({key: key, chats: []}, function () {
@@ -137,11 +137,15 @@ ccm.component({
 
                         var timestamp = new Date().getUTCMilliseconds();
 
-                        self.store.set({key: timestamp, participants: [self.user.data().key, value], messages: []}, function () {
+                        self.store.set({
+                            key: timestamp,
+                            participants: [self.user.data().key, value],
+                            messages: []
+                        }, function () {
                             // add chat to users and check if new participants are null
                             var part;
                             self.store.get(value, function (dataset) {
-                                if(dataset === null) {
+                                if (dataset === null) {
                                     self.store.set({key: value, chats: [timestamp]}, function () {
                                         part = dataset;
                                     });
@@ -204,7 +208,7 @@ ccm.component({
                         var value = ccm.helper.val(ccm.helper.find(self, '.message-input').val()).trim();
 
                         if (value === '') {
-                            return;
+                            return false;
                         }
 
                         dataset.messages.push({from: self.user.data().key, text: value});
