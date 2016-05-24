@@ -1,0 +1,34 @@
+{
+  "mgiese2s": {
+    "chats": [
+      "chat1", "chat2"
+    ]
+  },
+  "fdahma2s": {
+    "chats": [
+      "chat1"
+    ]
+  },
+  "testuser": {
+    "chats": [
+      "chat2"
+    ]
+  },
+  "chat1": {
+    "participants": ["mgiese2s", "fdahma2s"],
+    "messages": [
+      {"from":"mgiese2s", "text":"test"},
+      {"from":"mgiese2s", "text":"test2"},
+      {"from":"mgiese2s", "text":"test3"},
+      {"from":"fdahma2s", "text":"toll"}
+    ]
+  },
+  "chat2": {
+    "participants": ["mgiese2s", "testuser"],
+    "messages": [
+      {"from":"testuser", "text":"test"},
+      {"from":"testuser", "text":"test2"},
+      {"from":"mgiese2s", "text":"test3"}
+    ]
+  }
+}
