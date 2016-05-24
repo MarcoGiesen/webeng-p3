@@ -91,9 +91,10 @@ ccm.component({
          */
         this.render = function (callback) {
             var data;
+            var userKey;
 
             self.user.login(function () {
-                var key = self.user.data().key;
+                var key = userKey = self.user.data().key;
                 console.log('Account: ' + key);
                 self.store.get(key, function (dataset) {
                     if (dataset === null) {
@@ -170,26 +171,43 @@ ccm.component({
             function renderChats(chats) {
                 var chatOverviewDiv = ccm.helper.find(self, '.chat-overview');
                 chats.forEach(function (chat) {
-                    var dbChat = self.store.get(chat);
-
-                    chatOverviewDiv.append(ccm.helper.html(self.html.get('chat'), {
-                        name: ccm.helper.val(chat),
-                        onclick: function () {
-                            loadChat(chat);
-
-                            return false;
+                    self.store.get(chat, function (chatData) {
+                        var chatName = '';
+                        var participants = chatData.participants;
+                        var index = participants.indexOf(userKey);
+                        if (index > -1) {
+                            participants.splice(index, 1);
                         }
-                    }));
+                        for(var i = 0; i < participants.length; i++) {
+                            chatName += participants[i];
+                            if(i+1 < participants.length) {
+                                chatName += ', ';
+                            }
+                        }
+
+                        console.log(chatData);
+
+                        chatOverviewDiv.append(ccm.helper.html(self.html.get('chat'), {
+                            name: ccm.helper.val(chatName),
+                            onclick: function () {
+                                loadChat(chat);
+
+                                return false;
+                            }
+                        }));
+                    });
                 });
             }
 
             function loadChat(chatId) {
-                var messageChat = ccm.helper.find(self, '.messages');
+                var messageChat = ccm.helper.find(self, '.message-container');
+                var inputChat = ccm.helper.find(self, '.message-input-container');
                 var chatData = self.store.get(chatId);
                 var messageData = chatData.messages;
                 var template = 'message';
 
                 messageChat.html('');
+                inputChat.html('');
 
                 console.log(messageData);
 
@@ -204,7 +222,7 @@ ccm.component({
                     }));
                 });
 
-                messageChat.append(ccm.helper.html(self.html.get('inputMessage'), {
+                inputChat.append(ccm.helper.html(self.html.get('inputMessage'), {
                     onsubmit: function () {
                         var value = ccm.helper.val(ccm.helper.find(self, '.message-input').val()).trim();
 

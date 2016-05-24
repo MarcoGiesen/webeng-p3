@@ -37,9 +37,10 @@
     background-color: lightgray;
     float: left;
     overflow:scroll;
+    position: relative;
 }
 
-.ccm-messenger > .main > .messages > .message {
+.ccm-messenger > .main > .messages > .message-container > .message {
     position: relative;
     max-width: 780px;
     height: auto;
@@ -52,7 +53,7 @@
     border: #7F7F7F solid 2px;
 }
 
-.ccm-messenger > .main > .messages > .message:after {
+.ccm-messenger > .main > .messages > .message-container > .message:after {
     content: '';
     position: absolute;
     border-style: solid;
@@ -65,7 +66,7 @@
     left: 43px;
 }
 
-.ccm-messenger > .main > .messages > .message:before {
+.ccm-messenger > .main > .messages > .message-container > .message:before {
     content: '';
     position: absolute;
     border-style: solid;
@@ -78,11 +79,15 @@
     left: 42px;
 }
 
-.ccm-messenger > .main > .messages > .message > .name {
+.ccm-messenger > .main > .messages > .message-container > .message > .name {
     color: grey;
 }
 
-.ccm-messenger > .main > .messages > .message-me {
+.ccm-messenger > .main > .messages > .message-container > .message-me > .name {
+    color: grey;
+}
+
+.ccm-messenger > .main > .messages > .message-container > .message-me {
     position: relative;
     max-width: 780px;
     height: auto;
@@ -95,7 +100,7 @@
     border: #7F7F7F solid 2px;
 }
 
-.ccm-messenger > .main > .messages > .message-me:after {
+.ccm-messenger > .main > .messages > .message-container > .message-me:after {
     content: '';
     position: absolute;
     border-style: solid;
@@ -108,7 +113,7 @@
     left: 700px;
 }
 
-.ccm-messenger > .main > .messages > .message-me:before {
+.ccm-messenger > .main > .messages > .message-container > .message-me:before {
     content: '';
     position: absolute;
     border-style: solid;
@@ -121,8 +126,8 @@
     left: 699px;
 }
 
-.ccm-messenger > .main > .messages > .new_message {
-    position: relative;
+.ccm-messenger > .main > .messages > .message-input-container {
+    position: absolute;
     bottom: 0;
 }
 
