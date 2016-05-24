@@ -142,17 +142,15 @@ ccm.component({
                             participants: [self.user.data().key, value],
                             messages: []
                         }, function () {
-                            // add chat to users and check if new participants are null
-                            var part;
-                            self.store.get(value, function (dataset) {
-                                if (dataset === null) {
+                            self.store.get(value, function (userData) {
+                                if (userData === null) {
                                     self.store.set({key: value, chats: [timestamp]}, function () {
-                                        part = dataset;
+                                        console.log('new user created');
                                     });
                                 } else {
-                                    dataset.chats.push(timestamp);
-                                    dataset.store.set(dataset, function () {
-                                        part = dataset;
+                                    userData.chats.push(timestamp);
+                                    self.store.set(userData, function () {
+                                        console.log('added new conversation to user');
                                     });
                                 }
                             });
@@ -187,8 +185,8 @@ ccm.component({
 
             function loadChat(chatId) {
                 var messageChat = ccm.helper.find(self, '.messages');
-                var dataset = self.store.get(chatId);
-                var messageData = dataset.messages;
+                var chatData = self.store.get(chatId);
+                var messageData = chatData.messages;
 
                 messageChat.html('');
 
@@ -211,9 +209,9 @@ ccm.component({
                             return false;
                         }
 
-                        dataset.messages.push({from: self.user.data().key, text: value});
+                        chatData.messages.push({from: self.user.data().key, text: value});
 
-                        self.store.set(dataset, function () {
+                        self.store.set(chatData, function () {
                             loadChat(chatId);
                         });
 
