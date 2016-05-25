@@ -36,8 +36,13 @@
     height: 450px;
     background-color: lightgray;
     float: left;
-    overflow:scroll;
     position: relative;
+}
+
+
+.ccm-messenger > .main > .messages > .message-container {
+    height: 90%;
+    overflow:scroll;
 }
 
 .ccm-messenger > .main > .messages > .message-container > .message {
@@ -127,6 +132,7 @@
 }
 
 .ccm-messenger > .main > .messages > .message-input-container {
+    height: 10%;
     position: absolute;
     bottom: 0;
 }
