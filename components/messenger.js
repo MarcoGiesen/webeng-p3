@@ -20,15 +20,11 @@ ccm.component({
      * @type {ccm.components.messenger.config}
      */
     config: {
-
         html: [ccm.store, {local: 'json/messenger_html.json'}],
         key: 'messenger',
         store: [ccm.store, {store: 'messenger', url: 'ws://ccm2.inf.h-brs.de/index.js'}],
-        //store: [ccm.store, {local: 'json/messenger_data.json'}],
         style: [ccm.store, {local: 'css/messenger.css'}],
         user: [ccm.instance, 'https://kaul.inf.h-brs.de/ccm/components/user2.js']
-        // ...
-
     },
 
     /*-------------------------------------------- public component classes --------------------------------------------*/
@@ -60,13 +56,11 @@ ccm.component({
          * @param {function} callback - callback when this instance is initialized
          */
         self.init = function (callback) {
-
             self.store.onChange = function () {
                 self.render();
             };
 
             callback();
-
         };
 
         /**
@@ -77,12 +71,8 @@ ccm.component({
          * @param {function} callback - callback when this instance is ready
          */
         this.ready = function (callback) {
-
-            // ...
-
             // perform callback
             callback();
-
         };
 
         /**
@@ -92,7 +82,6 @@ ccm.component({
         this.render = function (callback) {
             var data;
             var userKey;
-
             self.user.login(function () {
                 var key = userKey = self.user.data().key;
                 console.log('Account: ' + key);
@@ -136,7 +125,7 @@ ccm.component({
                             return false;
                         }
 
-                        var timestamp = new Date().getUTCMilliseconds();
+                        var timestamp = Math.floor((Math.random() * new Date().getUTCMilliseconds()) + new Date().getUTCMilliseconds());
 
                         self.store.set({
                             key: timestamp,
@@ -170,14 +159,15 @@ ccm.component({
 
             function renderChats(chats) {
                 var chatOverviewDiv = ccm.helper.find(self, '.chat-overview');
+                chatOverviewDiv.html('');
                 chats.forEach(function (chat) {
                     self.store.get(chat, function (chatData) {
                         var chatName = '';
                         var participants = chatData.participants;
-                        var index = participants.indexOf(userKey);
+                        /*var index = participants.indexOf(userKey);
                         if (index > -1) {
                             participants.splice(index, 1);
-                        }
+                        }*/
                         for(var i = 0; i < participants.length; i++) {
                             chatName += participants[i];
                             if(i+1 < participants.length) {
@@ -204,7 +194,6 @@ ccm.component({
                 var inputChat = ccm.helper.find(self, '.message-input-container');
                 var chatData = self.store.get(chatId);
                 var messageData = chatData.messages;
-                var template = 'message';
 
                 messageChat.html('');
                 inputChat.html('');
@@ -212,7 +201,8 @@ ccm.component({
                 console.log(messageData);
 
                 messageData.forEach(function (message) {
-                    if(message.from === self.user.data().key) {
+                    var template = 'message';
+                    if(message.from == userKey) {
                         template = 'message-me';
                     }
 
@@ -261,7 +251,6 @@ ccm.component({
      * @property {ccm.key} key - key of [messenger dataset]{@link ccm.components.messenger.dataset} for rendering
      * @property {ccm.store} store - <i>ccm</i> datastore that contains the [messenger dataset]{@link ccm.components.messenger.dataset} for rendering
      * @property {ccm.style} style - css for own content
-     * ...
      */
 
     /**
@@ -270,7 +259,5 @@ ccm.component({
      * @property {ccm.key} key - dataset key
      * ...
      */
-
-    // ...
 
 });
