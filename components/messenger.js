@@ -43,7 +43,8 @@ ccm.component({
          * @private
          */
         var self = this;
-
+        var activeChat = -1;
+        var userKey;
         // ...
 
         /*------------------------------------------- public instance methods --------------------------------------------*/
@@ -57,7 +58,10 @@ ccm.component({
          */
         self.init = function (callback) {
             self.store.onChange = function () {
-                self.render();
+                if(activeChat !== -1 ) {
+                    self.renderPartialMessages(activeChat, false);
+                }
+                self.refreshChats();
             };
 
             callback();
@@ -81,15 +85,13 @@ ccm.component({
          */
         this.render = function (callback) {
             var data;
-            var userKey;
             self.user.login(function () {
-                var key = userKey = self.user.data().key;
-                console.log('Account: ' + key);
-                self.store.get(key, function (dataset) {
+                userKey = self.user.data().key;
+                console.log('Account: ' + userKey);
+                self.store.get(userKey, function (dataset) {
                     if (dataset === null) {
-                        var key = self.user.data().key;
-                        console.log({key: key, chats: []});
-                        self.store.set({key: key, chats: []}, function () {
+                        console.log({key: userKey, chats: []});
+                        self.store.set({key: userKey, chats: []}, function () {
                             self.render();
                         });
                     } else {
@@ -109,8 +111,8 @@ ccm.component({
 
                 var header = ccm.helper.find(self, '.header');
 
-                renderHeader(header, self.user.data().key);
-                renderChats(dataset.chats);
+                renderHeader(header, userKey);
+                self.renderPartialChatOverview(dataset.chats, true);
             }
 
             function renderHeader(divToAppend, username) {
@@ -129,7 +131,7 @@ ccm.component({
 
                         self.store.set({
                             key: timestamp,
-                            participants: [self.user.data().key, value],
+                            participants: [userKey, value],
                             messages: []
                         }, function () {
                             self.store.get(value, function (userData) {
@@ -148,82 +150,8 @@ ccm.component({
                             data.chats.push(timestamp);
 
                             self.store.set(data, function () {
-                                renderChats(data.chats);
+                                self.renderPartialChatOverview(data.chats);
                             });
-                        });
-
-                        return false;
-                    }
-                }));
-            }
-
-            function renderChats(chats) {
-                var chatOverviewDiv = ccm.helper.find(self, '.chat-overview');
-                chatOverviewDiv.html('');
-                chats.forEach(function (chat) {
-                    self.store.get(chat, function (chatData) {
-                        var chatName = '';
-                        var participants = chatData.participants;
-                        /*var index = participants.indexOf(userKey);
-                        if (index > -1) {
-                            participants.splice(index, 1);
-                        }*/
-                        for(var i = 0; i < participants.length; i++) {
-                            chatName += participants[i];
-                            if(i+1 < participants.length) {
-                                chatName += ', ';
-                            }
-                        }
-
-                        console.log(chatData);
-
-                        chatOverviewDiv.append(ccm.helper.html(self.html.get('chat'), {
-                            name: ccm.helper.val(chatName),
-                            onclick: function () {
-                                loadChat(chat);
-
-                                return false;
-                            }
-                        }));
-                    });
-                });
-            }
-
-            function loadChat(chatId) {
-                var messageChat = ccm.helper.find(self, '.message-container');
-                var inputChat = ccm.helper.find(self, '.message-input-container');
-                var chatData = self.store.get(chatId);
-                var messageData = chatData.messages;
-
-                messageChat.html('');
-                inputChat.html('');
-
-                console.log(messageData);
-
-                messageData.forEach(function (message) {
-                    var template = 'message';
-                    if(message.from == userKey) {
-                        template = 'message-me';
-                    }
-
-                    messageChat.append(ccm.helper.html(self.html.get(template), {
-                        name: ccm.helper.val(message.from),
-                        text: ccm.helper.val(message.text)
-                    }));
-                });
-
-                inputChat.append(ccm.helper.html(self.html.get('inputMessage'), {
-                    onsubmit: function () {
-                        var value = ccm.helper.val(ccm.helper.find(self, '.message-input').val()).trim();
-
-                        if (value === '') {
-                            return false;
-                        }
-
-                        chatData.messages.push({from: self.user.data().key, text: value});
-
-                        self.store.set(chatData, function () {
-                            loadChat(chatId);
                         });
 
                         return false;
@@ -233,6 +161,91 @@ ccm.component({
 
             if (callback) callback();
         };
+
+        this.renderPartialMessages = function(chatId, renderInputBoxFlag) {
+            activeChat = chatId;
+            var messageChat = ccm.helper.find(self, '.message-container');
+            var chatData = self.store.get(chatId);
+            var messageData = chatData.messages;
+            messageChat.html('');
+
+            var inputChat = ccm.helper.find(self, '.message-input-container');
+
+            console.log(messageData);
+
+            messageData.forEach(function (message) {
+                var template = 'message';
+                if(message.from == userKey) {
+                    template = 'message-me';
+                }
+
+                messageChat.append(ccm.helper.html(self.html.get(template), {
+                    name: ccm.helper.val(message.from),
+                    text: ccm.helper.val(message.text)
+                }));
+            });
+
+            jQuery(".message-container").scrollTop(jQuery(".message-container")[0].scrollHeight);
+
+            if(renderInputBoxFlag) {
+                inputChat.html('');
+                inputChat.append(ccm.helper.html(self.html.get('inputMessage'), {
+                    onsubmit: function () {
+                        var value = ccm.helper.val(ccm.helper.find(self, '.message-input').val()).trim();
+
+                        if (value === '') {
+                            return false;
+                        }
+
+                        var chatDataRefresh = self.store.get(chatId, function (refreshedData) {
+                            refreshedData.messages.push({from: userKey, text: value});
+                        });
+
+                        self.store.set(chatDataRefresh, function () {
+                            self.renderPartialMessages(chatId, true);
+                        });
+
+                        return false;
+                    }
+                }));
+            }
+            
+            jQuery('.new_message .message-input').focus();
+        };
+
+        this.renderPartialChatOverview = function(chats) {
+            var chatOverviewDiv = ccm.helper.find(self, '.chat-overview');
+            chatOverviewDiv.html('');
+            chats.forEach(function (chat) {
+                self.store.get(chat, function (chatData) {
+                    var chatName = '';
+                    var participants = chatData.participants;
+                    for(var i = 0; i < participants.length; i++) {
+                        chatName += participants[i];
+                        if(i+1 < participants.length) {
+                            chatName += ', ';
+                        }
+                    }
+
+                    console.log(chatData);
+
+                    chatOverviewDiv.append(ccm.helper.html(self.html.get('chat'), {
+                        name: ccm.helper.val(chatName),
+                        onclick: function () {
+                            self.renderPartialMessages(chat, true);
+
+                            return false;
+                        }
+                    }));
+                });
+            });
+        };
+
+        this.refreshChats = function() {
+            self.store.get(userKey, function (data) {
+                self.renderPartialChatOverview(data.chats);
+            });
+        }
 
     }
 
