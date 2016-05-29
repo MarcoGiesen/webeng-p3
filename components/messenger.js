@@ -86,13 +86,12 @@ ccm.component({
         this.render = function (callback) {
             var data;
             self.user.login(function () {
-                var key = userKey = self.user.data().key;
-                console.log('Account: ' + key);
-                self.store.get(key, function (dataset) {
+                userKey = self.user.data().key;
+                console.log('Account: ' + userKey);
+                self.store.get(userKey, function (dataset) {
                     if (dataset === null) {
-                        var key = self.user.data().key;
-                        console.log({key: key, chats: []});
-                        self.store.set({key: key, chats: []}, function () {
+                        console.log({key: userKey, chats: []});
+                        self.store.set({key: userKey, chats: []}, function () {
                             self.render();
                         });
                     } else {
@@ -112,7 +111,7 @@ ccm.component({
 
                 var header = ccm.helper.find(self, '.header');
 
-                renderHeader(header, self.user.data().key);
+                renderHeader(header, userKey);
                 self.renderPartialChatOverview(dataset.chats);
             }
 
@@ -196,7 +195,7 @@ ccm.component({
                     }
 
                     var chatDataRefresh = self.store.get(chatId, function (refreshedData) {
-                        refreshedData.messages.push({from: self.user.data().key, text: value});
+                        refreshedData.messages.push({from: userKey, text: value});
                     });
 
                     self.store.set(chatDataRefresh, function () {
