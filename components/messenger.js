@@ -59,7 +59,7 @@ ccm.component({
         self.init = function (callback) {
             self.store.onChange = function () {
                 if(activeChat !== -1 ) {
-                    self.renderPartialMessages(activeChat);
+                    self.renderPartialMessages(activeChat, false);
                 }
                 self.refreshChats();
             };
@@ -112,7 +112,7 @@ ccm.component({
                 var header = ccm.helper.find(self, '.header');
 
                 renderHeader(header, userKey);
-                self.renderPartialChatOverview(dataset.chats);
+                self.renderPartialChatOverview(dataset.chats, true);
             }
 
             function renderHeader(divToAppend, username) {
@@ -162,7 +162,7 @@ ccm.component({
             if (callback) callback();
         };
 
-        this.renderPartialMessages = function(chatId) {
+        this.renderPartialMessages = function(chatId, renderInputBoxFlag) {
             activeChat = chatId;
             var messageChat = ccm.helper.find(self, '.message-container');
             var chatData = self.store.get(chatId);
@@ -170,7 +170,6 @@ ccm.component({
             messageChat.html('');
 
             var inputChat = ccm.helper.find(self, '.message-input-container');
-            inputChat.html('');
 
             console.log(messageData);
 
@@ -186,27 +185,32 @@ ccm.component({
                 }));
             });
 
-            inputChat.append(ccm.helper.html(self.html.get('inputMessage'), {
-                onsubmit: function () {
-                    var value = ccm.helper.val(ccm.helper.find(self, '.message-input').val()).trim();
+            jQuery(".message-container").scrollTop(jQuery(".message-container")[0].scrollHeight);
 
-                    if (value === '') {
+            if(renderInputBoxFlag) {
+                inputChat.html('');
+                inputChat.append(ccm.helper.html(self.html.get('inputMessage'), {
+                    onsubmit: function () {
+                        var value = ccm.helper.val(ccm.helper.find(self, '.message-input').val()).trim();
+
+                        if (value === '') {
+                            return false;
+                        }
+
+                        var chatDataRefresh = self.store.get(chatId, function (refreshedData) {
+                            refreshedData.messages.push({from: userKey, text: value});
+                        });
+
+                        self.store.set(chatDataRefresh, function () {
+                            self.renderPartialMessages(chatId, true);
+                        });
+
                         return false;
                     }
-
-                    var chatDataRefresh = self.store.get(chatId, function (refreshedData) {
-                        refreshedData.messages.push({from: userKey, text: value});
-                    });
-
-                    self.store.set(chatDataRefresh, function () {
-                        self.renderPartialMessages(chatId);
-                    });
-
-                    return false;
-                }
-            }));
-
-            jQuery(".message-container").scrollTop(jQuery(".message-container")[0].scrollHeight);
+                }));
+            }
+            
+            jQuery('.new_message .message-input').focus();
         };
 
         this.renderPartialChatOverview = function(chats) {
@@ -228,7 +232,7 @@ ccm.component({
                     chatOverviewDiv.append(ccm.helper.html(self.html.get('chat'), {
                         name: ccm.helper.val(chatName),
                         onclick: function () {
-                            self.renderPartialMessages(chat);
+                            self.renderPartialMessages(chat, true);
 
                             return false;
                         }
