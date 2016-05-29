@@ -133,7 +133,17 @@
 
 .ccm-messenger > .main > .messages > .message-input-container {
     height: 10%;
+    width: 100%;
     position: absolute;
     bottom: 0;
 }
 
+input.message-input {
+    height: 100%;
+    width: 90%;
+}
+
+.message-input-container .button {
+    height: 100%;
+    width: 9%;
+}
