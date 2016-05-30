@@ -45,6 +45,7 @@ ccm.component({
         var self = this;
         var activeChat = -1;
         var userKey;
+        var data;
         // ...
 
         /*------------------------------------------- public instance methods --------------------------------------------*/
@@ -84,7 +85,6 @@ ccm.component({
          * @param {function} [callback] - callback when content is rendered
          */
         this.render = function (callback) {
-            var data;
             self.user.login(function () {
                 userKey = self.user.data().key;
                 console.log('Account: ' + userKey);
@@ -127,24 +127,28 @@ ccm.component({
                             return false;
                         }
 
+                        value = value.trim().split(',');
+
                         var timestamp = Math.floor((Math.random() * new Date().getUTCMilliseconds()) + new Date().getUTCMilliseconds());
 
                         self.store.set({
                             key: timestamp,
-                            participants: [userKey, value],
+                            participants: [userKey].concat(value),
                             messages: []
                         }, function () {
-                            self.store.get(value, function (userData) {
-                                if (userData === null) {
-                                    self.store.set({key: value, chats: [timestamp]}, function () {
-                                        console.log('new user created');
-                                    });
-                                } else {
-                                    userData.chats.push(timestamp);
-                                    self.store.set(userData, function () {
-                                        console.log('added new conversation to user');
-                                    });
-                                }
+                            value.forEach(function (member) {
+                                self.store.get(member, function (userData) {
+                                    if (userData === null) {
+                                        self.store.set({key: member, chats: [timestamp]}, function () {
+                                            console.log('new user created');
+                                        });
+                                    } else {
+                                        userData.chats.push(timestamp);
+                                        self.store.set(userData, function () {
+                                            console.log('added new conversation to user');
+                                        });
+                                    }
+                                });
                             });
 
                             data.chats.push(timestamp);
