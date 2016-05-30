@@ -16,24 +16,40 @@
 
 .ccm-messenger > .main > .chat-overview {
     width: 200px;
-    height: 450px;
-    background-color: lightgreen;
+    height: 100%;
+    background-color: white;
     float: left;
+}
+
+.ccm-messenger > .main > .chat-overview > .chat-selection {
+    width: 200px;
+    height: 85%;
+    background-color: white;
     overflow:scroll;
 }
 
-.ccm-messenger > .main > .chat-overview > .chat {
+.ccm-messenger > .main > .chat-overview > .chat-header-user-info {
+    border-bottom: 1px solid black;
+    background-color: lightyellow;
+    padding: 5px;
+    height: 15%;
+}
+
+.ccm-messenger > .main > .chat-overview > .chat-selection > .chat {
     height: 25px;
-    width: 160px;
+    width: 180px;
     padding: 10px;
-    margin: 5px auto 5px auto;
     cursor: pointer;
-    border: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+.ccm-messenger > .main > .chat-overview > .chat-selection > .chat:hover {
+    background-color: lightgray;
 }
 
 .ccm-messenger > .main > .messages {
     width: 780px;
-    height: 450px;
+    height: 500px;
     background-color: lightgray;
     float: left;
     position: relative;
@@ -41,17 +57,17 @@
 
 
 .ccm-messenger > .main > .messages > .message-container {
-    height: 90%;
+    height: 480px;
     overflow:scroll;
 }
 
 .ccm-messenger > .main > .messages > .message-container > .message {
     position: relative;
-    max-width: 780px;
+    max-width: 740px;
     height: auto;
     padding: 5px;
     margin: 15px 0 25px 0;
-    background: #C2FFFF;
+    background: #fefefe;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px;
@@ -63,7 +79,7 @@
     position: absolute;
     border-style: solid;
     border-width: 15px 15px 0;
-    border-color: #C2FFFF transparent;
+    border-color: #fefefe transparent;
     display: block;
     width: 0;
     z-index: 1;
@@ -94,11 +110,11 @@
 
 .ccm-messenger > .main > .messages > .message-container > .message-me {
     position: relative;
-    max-width: 780px;
+    max-width: 740px;
     height: auto;
     padding: 5px;
     margin: 15px 0 25px 0;
-    background: #D5D925;
+    background: #90FF90;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px;
@@ -110,7 +126,7 @@
     position: absolute;
     border-style: solid;
     border-width: 15px 15px 0;
-    border-color: #D5D925 transparent;
+    border-color: #90FF90 transparent;
     display: block;
     width: 0;
     z-index: 1;
@@ -132,10 +148,18 @@
 }
 
 .ccm-messenger > .main > .messages > .message-input-container {
-    height: 10%;
+    height: 20px;
     width: 100%;
     position: absolute;
     bottom: 0;
+}
+
+div.new-message {
+    height: 100%;
+}
+
+.new-message .message-input {
+    height: 100%;
 }
 
 .message-input-container .message-input {

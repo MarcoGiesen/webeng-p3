@@ -5,11 +5,17 @@
     "inner": [
       {
         "tag": "div",
-        "class": "header"
-      },
-      {
-        "tag": "div",
-        "class": "chat-overview"
+        "class": "chat-overview",
+        "inner": [
+          {
+            "tag": "div",
+            "class": "chat-header-user-info"
+          },
+          {
+            "tag": "div",
+            "class": "chat-selection"
+          }
+        ]
       },
       {
         "tag": "div",
@@ -38,10 +44,10 @@
       {
         "tag": "div",
         "class": "name",
-        "inner": "%name%",
-        "onclick": "%onclick%"
+        "inner": "%name%"
       }
-    ]
+    ],
+    "onclick": "%onclick%"
   },
   "message": {
     "tag": "div",
@@ -80,29 +86,21 @@
     "class": "new_message",
     "inner": [
       {
-        "tag": "div",
-        "class": "name"
-      },
-      {
-        "tag": "div",
-        "class": "text",
-        "inner": {
-          "tag": "form",
-          "inner": [
-            {
-              "tag": "input",
-              "class": "message-input",
-              "placeholder": "Enter message here..."
-            },
-            {
-              "tag": "input",
-              "class": "button",
-              "type": "submit",
-              "value": "Send"
-            }
-          ],
-          "onsubmit": "%onsubmit%"
-        }
+        "tag": "form",
+        "inner": [
+          {
+            "tag": "input",
+            "class": "message-input",
+            "placeholder": "Enter message here..."
+          },
+          {
+            "tag": "input",
+            "class": "button",
+            "type": "submit",
+            "value": "Send"
+          }
+        ],
+        "onsubmit": "%onsubmit%"
       }
     ]
   },
@@ -110,10 +108,6 @@
     "tag": "div",
     "class": "new_chat",
     "inner": [
-      {
-        "tag": "div",
-        "class": "names"
-      },
       {
         "tag": "div",
         "class": "text",

@@ -109,7 +109,7 @@ ccm.component({
                 var element = ccm.helper.element(self);
                 element.html(ccm.helper.html(self.html.get('main')));
 
-                var header = ccm.helper.find(self, '.header');
+                var header = ccm.helper.find(self, '.chat-header-user-info');
 
                 renderHeader(header, userKey);
                 self.renderPartialChatOverview(dataset.chats, true);
@@ -214,7 +214,7 @@ ccm.component({
         };
 
         this.renderPartialChatOverview = function(chats) {
-            var chatOverviewDiv = ccm.helper.find(self, '.chat-overview');
+            var chatOverviewDiv = ccm.helper.find(self, '.chat-selection');
             chatOverviewDiv.html('');
             chats.forEach(function (chat) {
                 self.store.get(chat, function (chatData) {
