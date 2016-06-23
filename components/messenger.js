@@ -46,6 +46,7 @@ ccm.component({
         var activeChat = -1;
         var userKey;
         var data;
+        var chatData = [];
         // ...
 
         /*------------------------------------------- public instance methods --------------------------------------------*/
@@ -210,8 +211,6 @@ ccm.component({
 
             var inputChat = ccm.helper.find(self, '.message-input-container');
 
-            console.log(messageData);
-
             messageData.forEach(function (message) {
                 var template = 'message';
                 if(message.from == userKey) {
@@ -243,6 +242,7 @@ ccm.component({
 
                         self.store.set(chatDataRefresh, function () {
                             self.renderPartialMessages(chatId, true);
+                            self.refreshChats();
                         });
 
                         return false;
@@ -254,30 +254,56 @@ ccm.component({
         };
 
         this.renderPartialChatOverview = function(chats) {
+            /* maybe ccm does not support OR queries on mongo-DB
+            var chatsArr = [];
+            chats.forEach(function (chat) {
+                chatsArr.push({key:chat});
+            });
+            console.log(chatsArr);
+
+            self.store.get({ $or: chatsArr }, function (test) {
+               console.log('chats: ' + test);
+            });
+            */
+            chatData = [];
+            chats.forEach(function (chat) {
+                self.store.get(chat, function (resultChat) {
+                    chatData.push(resultChat);
+                    if(chatData.length === chats.length) {
+                        self.sortAndRenderChats();
+                    }
+                });
+            });
+        };
+
+        this.sortAndRenderChats = function () {
             var chatOverviewDiv = ccm.helper.find(self, '.chat-selection');
             chatOverviewDiv.html('');
-            chats.forEach(function (chat) {
-                self.store.get(chat, function (chatData) {
-                    var chatName = '';
-                    var participants = chatData.participants;
-                    for(var i = 0; i < participants.length; i++) {
-                        chatName += participants[i];
-                        if(i+1 < participants.length) {
-                            chatName += ', ';
-                        }
+
+            chatData.sort(function(a,b) {
+                return new Date(b.updated_at) - new Date(a.updated_at);
+            });
+
+            console.log('ChatData: ' + chatData);
+
+            chatData.forEach(function (chat) {
+                var chatName = '';
+                var participants = chat.participants;
+                for(var i = 0; i < participants.length; i++) {
+                    chatName += participants[i];
+                    if(i+1 < participants.length) {
+                        chatName += ', ';
                     }
+                }
 
-                    console.log(chatData);
+                chatOverviewDiv.append(ccm.helper.html(self.html.get('chat'), {
+                    name: ccm.helper.val(chatName),
+                    onclick: function () {
+                        self.renderPartialMessages(chat.key, true);
 
-                    chatOverviewDiv.append(ccm.helper.html(self.html.get('chat'), {
-                        name: ccm.helper.val(chatName),
-                        onclick: function () {
-                            self.renderPartialMessages(chat, true);
-
-                            return false;
-                        }
-                    }));
-                });
+                        return false;
+                    }
+                }));
             });
         };
 
