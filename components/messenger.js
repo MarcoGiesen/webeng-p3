@@ -282,7 +282,6 @@ ccm.component({
         };
 
         this.refreshChats = function() {
-            self.store.find();
             self.store.get(userKey, function (data) {
                 self.renderPartialChatOverview(data.chats);
             });
