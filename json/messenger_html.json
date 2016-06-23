@@ -62,6 +62,11 @@
         "tag": "div",
         "class": "name",
         "inner": "%name%"
+      },
+      {
+        "tag": "div",
+        "class": "time",
+        "inner": "%time%"
       }
     ]
   },
@@ -78,6 +83,11 @@
         "tag": "div",
         "class": "name",
         "inner": "%name%"
+      },
+      {
+        "tag": "div",
+        "class": "time",
+        "inner": "%time%"
       }
     ]
   },

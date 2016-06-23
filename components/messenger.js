@@ -86,6 +86,12 @@ ccm.component({
          */
         this.render = function (callback) {
             self.user.login(function () {
+                /*self.store.get(function (result) {
+                    console.log(result);
+                    result.forEach(function (row) {
+                        self.store.del(row.key);
+                    });
+                });*/
                 userKey = self.user.data().key;
                 console.log('Account: ' + userKey);
                 self.store.get(userKey, function (dataset) {
@@ -129,34 +135,32 @@ ccm.component({
 
                         value = value.trim().split(',');
 
-                        var timestamp = Math.floor((Math.random() * new Date().getUTCMilliseconds()) + new Date().getUTCMilliseconds());
+                        var part = [userKey].concat(value);
+                        console.log('Anzahl Konversations-Teilnehmer: ' + part.length);
+                        if(part.length <= 2) {
+                            self.store.get({participants: [userKey].concat(value)}, function (res) {
+                                console.log(res);
+                                if(res.length === 0) {
+                                    self.store.get({participants: value.concat([userKey])}, function (iRes) {
+                                        console.log(iRes);
+                                        if(iRes.length === 0) {
+                                            console.log('test');
+                                            self.createChat(part);
 
-                        self.store.set({
-                            key: timestamp,
-                            participants: [userKey].concat(value),
-                            messages: []
-                        }, function () {
-                            value.forEach(function (member) {
-                                self.store.get(member, function (userData) {
-                                    if (userData === null) {
-                                        self.store.set({key: member, chats: [timestamp]}, function () {
-                                            console.log('new user created');
-                                        });
-                                    } else {
-                                        userData.chats.push(timestamp);
-                                        self.store.set(userData, function () {
-                                            console.log('added new conversation to user');
-                                        });
-                                    }
-                                });
+                                            return false;
+                                        } else {
+                                            alert('Chat existiert bereits.');
+                                            return false;
+                                        }
+                                    });
+                                } else {
+                                    alert('Chat existiert bereits.');
+                                    return false;
+                                }
                             });
-
-                            data.chats.push(timestamp);
-
-                            self.store.set(data, function () {
-                                self.renderPartialChatOverview(data.chats);
-                            });
-                        });
+                        } else {
+                            self.createChat(part);
+                        }
 
                         return false;
                     }
@@ -164,6 +168,37 @@ ccm.component({
             }
 
             if (callback) callback();
+        };
+
+        this.createChat = function (participants) {
+            var timestamp = Math.floor(((Math.random() + new Date().getUTCMilliseconds()) * new Date().getUTCMilliseconds()));
+
+            self.store.set({
+                key: timestamp,
+                participants: participants,
+                messages: []
+            }, function () {
+                participants.forEach(function (member) {
+                    self.store.get(member, function (userData) {
+                        if (userData === null) {
+                            self.store.set({key: member, chats: [timestamp]}, function () {
+                                console.log('new user created');
+                            });
+                        } else {
+                            userData.chats.push(timestamp);
+                            self.store.set(userData, function () {
+                                console.log('added new conversation to user');
+                            });
+                        }
+                    });
+                });
+
+                data.chats.push(timestamp);
+
+                self.store.set(data, function () {
+                    self.renderPartialChatOverview(data.chats);
+                });
+            });
         };
 
         this.renderPartialMessages = function(chatId, renderInputBoxFlag) {
@@ -185,7 +220,8 @@ ccm.component({
 
                 messageChat.append(ccm.helper.html(self.html.get(template), {
                     name: ccm.helper.val(message.from),
-                    text: ccm.helper.val(message.text)
+                    text: ccm.helper.val(message.text),
+                    time: ccm.helper.val(message.time)
                 }));
             });
 
@@ -202,7 +238,7 @@ ccm.component({
                         }
 
                         var chatDataRefresh = self.store.get(chatId, function (refreshedData) {
-                            refreshedData.messages.push({from: userKey, text: value});
+                            refreshedData.messages.push({from: userKey, text: value, time: new Date()});
                         });
 
                         self.store.set(chatDataRefresh, function () {
@@ -249,7 +285,7 @@ ccm.component({
             self.store.get(userKey, function (data) {
                 self.renderPartialChatOverview(data.chats);
             });
-        }
+        };
 
     }
 
