@@ -207,9 +207,16 @@ ccm.component({
             var messageChat = ccm.helper.find(self, '.message-container');
             var chatData = self.store.get(chatId);
             var messageData = chatData.messages;
+            var chatName = self.generateChatName(chatData.participants);
             messageChat.html('');
 
             var inputChat = ccm.helper.find(self, '.message-input-container');
+            var chatHeader = ccm.helper.find(self, '.chat-header-container');
+
+            chatHeader.html('');
+            chatHeader.append(ccm.helper.html(self.html.get('chat-header'), {
+                chatName: ccm.helper.val(chatName)
+            }));
 
             messageData.forEach(function (message) {
                 var template = 'message';
@@ -287,15 +294,7 @@ ccm.component({
             console.log('ChatData: ' + chatData);
 
             chatData.forEach(function (chat) {
-                var chatName = '';
-                var participants = chat.participants;
-                for(var i = 0; i < participants.length; i++) {
-                    chatName += participants[i];
-                    if(i+1 < participants.length) {
-                        chatName += ', ';
-                    }
-                }
-
+                var chatName = self.generateChatName(chat.participants);
                 chatOverviewDiv.append(ccm.helper.html(self.html.get('chat'), {
                     name: ccm.helper.val(chatName),
                     onclick: function () {
@@ -312,6 +311,18 @@ ccm.component({
                 self.renderPartialChatOverview(data.chats);
             });
         };
+
+        this.generateChatName = function (participants) {
+            var chatName = '';
+            for(var i = 0; i < participants.length; i++) {
+                chatName += participants[i];
+                if(i+1 < participants.length) {
+                    chatName += ', ';
+                }
+            }
+
+            return chatName;
+        }
 
     }
 

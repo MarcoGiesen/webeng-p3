@@ -23,6 +23,10 @@
         "inner": [
           {
             "tag": "div",
+            "class": "chat-header-container"
+          },
+          {
+            "tag": "div",
             "class": "message-container"
           },
           {
@@ -45,6 +49,18 @@
         "tag": "div",
         "class": "name",
         "inner": "%name%"
+      }
+    ],
+    "onclick": "%onclick%"
+  },
+  "chat-header": {
+    "tag": "div",
+    "class": "chat-header",
+    "inner": [
+      {
+        "tag": "div",
+        "class": "chat-name",
+        "inner": "%chatName%"
       }
     ],
     "onclick": "%onclick%"
