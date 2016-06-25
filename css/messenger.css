@@ -55,8 +55,13 @@
     position: relative;
 }
 
+.ccm-messenger > .main > .messages > .chat-header-container {
+    height: 30px;
+    overflow: hidden;
+}
+
 .ccm-messenger > .main > .messages > .message-container {
-    height: 480px;
+    height: 450px;
     overflow: scroll;
 }
 
