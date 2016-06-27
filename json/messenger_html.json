@@ -44,7 +44,13 @@
   "chat": {
     "tag": "div",
     "class": "chat",
+    "id": "%chatId%",
     "inner": [
+      {
+        "tag": "div",
+        "class": "leave-chat",
+        "inner": "X"
+      },
       {
         "tag": "div",
         "class": "name",

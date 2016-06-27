@@ -43,8 +43,15 @@
     border-bottom: 1px solid black;
 }
 
+.ccm-messenger > .main > .chat-overview > .chat-selection > .chat > .leave-chat {
+    color: red;
+    float: left;
+    margin: 0 2% 0 0;
+}
+
 .ccm-messenger > .main > .chat-overview > .chat-selection > .chat:hover {
     background-color: lightgray;
+    border-bottom: 1px solid black;
 }
 
 .ccm-messenger > .main > .messages {
