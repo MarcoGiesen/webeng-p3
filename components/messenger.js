@@ -368,7 +368,7 @@ ccm.component({
                 }
                 // participants = 2 -> remove entire chat
                 console.log(chatId);
-                self.store.del(chatId, function (result) {
+                self.store.del(parseInt(chatId), function (result) {
                     console.log('deleted Chat: ' + result);
                     resultChat.participants.forEach(function (member) {
                         self.store.get(member, function (userResult) {
