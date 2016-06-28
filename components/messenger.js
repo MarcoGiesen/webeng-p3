@@ -20,10 +20,10 @@ ccm.component({
      * @type {ccm.components.messenger.config}
      */
     config: {
-        html: [ccm.store, {local: 'json/messenger_html.json'}],
+        html: [ccm.store, 'http://www2.inf.fh-bonn-rhein-sieg.de/~mgiese2s/webeng/phase4/json/messenger_jsonp_html.json'],
         key: 'messenger',
         store: [ccm.store, {store: 'messenger', url: 'ws://ccm2.inf.h-brs.de/index.js'}],
-        style: [ccm.store, {local: 'css/messenger.css'}],
+        style: [ccm.store, 'http://www2.inf.fh-bonn-rhein-sieg.de/~mgiese2s/webeng/phase4/css/messenger.css'],
         user: [ccm.instance, 'https://kaul.inf.h-brs.de/ccm/components/user2.js']
     },
 
