@@ -297,12 +297,26 @@ ccm.component({
                 var chatName = self.generateChatName(chat.participants);
                 chatOverviewDiv.append(ccm.helper.html(self.html.get('chat'), {
                     name: ccm.helper.val(chatName),
+                    chatId: chat.key,
                     onclick: function () {
                         self.renderPartialMessages(chat.key, true);
 
                         return false;
                     }
                 }));
+            });
+
+            jQuery('.leave-chat').click(function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var r = confirm("Willst du den Chat verlassen/löschen?");
+                if (r == true) {
+                    var chatId = jQuery(this).parent().attr("id");
+                    self.deleteChat(chatId);
+                }
+
+                return false;
             });
         };
 
@@ -322,6 +336,54 @@ ccm.component({
             }
 
             return chatName;
+        };
+        
+        this.deleteChat = function (chatId) {
+            if(chatId == activeChat) {
+                activeChat = -1;
+            }
+
+            self.store.get(chatId, function (resultChat) {
+                console.log(resultChat);
+                // partipants > 2 dont delete chat, just remove the current user from it
+                if(resultChat.participants.length > 2) {
+                    for(var i = resultChat.participants.length - 1; i >= 0; i--) {
+                        if(resultChat.participants[i] === userKey) {
+                            resultChat.participants.splice(i, 1);
+                        }
+                    }
+                    self.store.set(resultChat);
+                    self.store.get(userKey, function (userResult) {
+                        for(var i = userResult.chats.length - 1; i >= 0; i--) {
+                            if(userResult.chats[i] == chatId) {
+                                userResult.chats.splice(i, 1);
+                                self.store.set(userResult, function () {
+                                    self.refreshChats();
+                                });
+                            }
+                        }
+                    });
+
+                    return;
+                }
+                // participants = 2 -> remove entire chat
+                console.log(chatId);
+                self.store.del(chatId, function (result) {
+                    console.log('deleted Chat: ' + result);
+                    resultChat.participants.forEach(function (member) {
+                        self.store.get(member, function (userResult) {
+                            for(var i = userResult.chats.length - 1; i >= 0; i--) {
+                                if(userResult.chats[i] == chatId) {
+                                    userResult.chats.splice(i, 1);
+                                }
+                            }
+                            self.store.set(userResult, function () {
+                                self.refreshChats();
+                            });
+                        });
+                    });
+                });
+            });
         }
 
     }
