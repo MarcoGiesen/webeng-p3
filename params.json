@@ -1,6 +1,6 @@
 {
   "name": "Webeng-p3",
   "tagline": "",
-  "body": "### HBRS Campus-Messenger\r\nThe messenger works with an LDAP login and can be used to create chats with 2 - n different users. \r\n\r\n### Authors and Contributors\r\nThe author of this project is @MarcoGiesen and a useful contributor was @FranzD1991 who helped in testing.\r\n\r\n### Support or Contact\r\nHaving trouble with Pages? Check out our [documentation](https://help.github.com/pages) or [contact support](https://github.com/contact) and we’ll help you sort it out.",
+  "body": "### HBRS Campus-Messenger\r\nThe messenger works with an LDAP login and can be used to create chats with 2 - n different users. \r\n\r\nYou can find the component [here](http://www2.inf.fh-bonn-rhein-sieg.de/~mgiese2s/webeng/phase4/).\r\n\r\n### Authors and Contributors\r\nThe author of this project is @MarcoGiesen and a useful contributor was @FranzD1991 who helped in testing.\r\n\r\n### Support or Contact\r\nHaving trouble with Pages? Check out our [documentation](https://help.github.com/pages) or [contact support](https://github.com/contact) and we’ll help you sort it out.",
   "note": "Don't delete this file! It's used internally to help with page regeneration."
 }
